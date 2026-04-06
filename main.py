@@ -54,23 +54,6 @@ app.include_router(revision_detail_router, prefix="/plans", tags=["Revision Deta
 app.include_router(lock_router, prefix="/plans", tags=["Plan Lock"])
 app.include_router(actions_router)
 
-@app.get("/", tags=["Health"])
-def root():
-    return {
-        "status": "ok",
-        "api":    "Glimmora Enterprise Plan Review API",
-        "docs":   "/docs",
-        "endpoints": {
-            "list_plans":       "GET  /plans",
-            "get_plan":         "GET  /plans/{plan_id}",
-            "get_plan_status":  "GET  /plans/{plan_id}/status",
-            "confirm_plan":     "POST /plans/{plan_id}/confirm",
-            "request_revision": "POST /plans/{plan_id}/request-revision",
-            "lock_plan":        "POST /plans/{plan_id}/lock",
-        },
-    }
-
-
-@app.get("/health", tags=["Health"])
-def health():
-    return {"status": "ok"}
+@app.get("/") 
+def home(): 
+    return {"message": "API is running"}

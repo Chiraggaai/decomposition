@@ -1,0 +1,16 @@
+# Render Blueprint: https://render.com/docs/blueprint-spec
+# After pushing to GitHub/GitLab, use "New" → "Blueprint" and select this repo.
+
+services:
+  - type: web
+    name: glimmora-plan-review-api
+    runtime: python
+    plan: free
+    region: oregon
+    # Pin Python: 3.14 has no pydantic-core wheels yet → pip builds Rust → fails on Render FS.
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
