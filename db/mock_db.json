@@ -1,0 +1,47 @@
+{
+  "plan_status": {
+    "1": "PLAN REVIEW REQUIRED",
+    "2": "CONFIRMED"
+  },
+  "checklist": {
+    "1": {
+      "item1": true,
+      "item2": true,
+      "item3": true
+    },
+    "2": {
+      "item1": true,
+      "item2": true,
+      "item3": true
+    }
+  },
+  "project_started": {
+    "1": true,
+    "2": true
+  },
+  "plans": {
+    "1": [
+      {
+        "revision_id": 1,
+        "tasks": [
+          { "id": 1, "name": "Setup Project", "effort": 2 },
+          { "id": 2, "name": "Design DB", "effort": 3 }
+        ],
+        "notes": "Initial plan"
+      },
+      {
+        "revision_id": 2,
+        "tasks": [
+          { "id": 1, "name": "Setup Project", "effort": 4 },
+          { "id": 3, "name": "API Development", "effort": 5 }
+        ],
+        "notes": "Updated plan"
+      }
+    ]
+  }
+  "p1": {
+    "status": "READY_FOR_KICKOFF",
+    "revision_count": 0
+    }
+}
+}
