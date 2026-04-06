@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Glimmora — Enterprise Plan Review API
 
 ## Run
@@ -62,3 +63,6 @@ glimmora_plan_api/
 ├── .env.example
 └── README.md
 ```
+=======
+# decomposition
+>>>>>>> 35e561b6399cf4e80ea28592e347226ed70fced3
