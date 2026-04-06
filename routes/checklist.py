@@ -74,7 +74,8 @@ def validate_dates(plan_id: int):
         warning = f"Plan exceeds SOW by {diff} days"
 
     return {
-        "sow_start": dates["sow_start"],
+        "sow_start":
+        dates["sow_start"],
         "sow_end": dates["sow_end"],
         "plan_start": dates["plan_start"],
         "plan_end": dates["plan_end"],
