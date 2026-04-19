@@ -4,16 +4,8 @@
     "2": "CONFIRMED"
   },
   "checklist": {
-    "1": {
-      "item1": true,
-      "item2": true,
-      "item3": true
-    },
-    "2": {
-      "item1": true,
-      "item2": true,
-      "item3": true
-    }
+    "1": { "item1": true, "item2": true, "item3": true },
+    "2": { "item1": true, "item2": true, "item3": true }
   },
   "project_started": {
     "1": true,
@@ -38,10 +30,166 @@
         "notes": "Updated plan"
       }
     ]
-  }
+  },
   "p1": {
     "status": "READY_FOR_KICKOFF",
     "revision_count": 0
+  },
+
+  "_test_plans_actions": {
+    "PLAN-001": { "status": "PENDING",  "approved_by": null, "approved_at": null },
+    "PLAN-002": { "status": "PENDING",  "approved_by": null, "approved_at": null },
+    "PLAN-003": { "status": "APPROVED", "approved_by": "enterprise_user_001", "approved_at": "2026-04-18T11:59:57.405000" },
+    "PLAN-004": { "status": "PENDING",  "approved_by": null, "approved_at": null }
+  },
+
+  "_test_plan_edits": {
+    "PLAN-001": {
+      "status": "PENDING",
+      "edit_history": [],
+      "tasks": [
+        { "task_id": 1, "milestone": "M1", "task_name": "Discovery & requirements", "skills": "Analysis",    "seniority": "Senior", "effort": 5,  "start_date": "2026-04-01", "end_date": "2026-04-05", "critical": true  },
+        { "task_id": 2, "milestone": "M1", "task_name": "Implementation",           "skills": "Engineering", "seniority": "Mid",    "effort": 10, "start_date": "2026-04-06", "end_date": "2026-04-20", "critical": true  },
+        { "task_id": 3, "milestone": "M2", "task_name": "QA & handover",            "skills": "QA",          "seniority": "Junior", "effort": 4,  "start_date": "2026-04-21", "end_date": "2026-04-25", "critical": false }
+      ]
+    },
+    "PLAN-002": {
+      "status": "AI_REVIEW_SUBMITTED",
+      "edit_history": [
+        { "submitted_at": "2026-04-18T10:00:00.000000", "notes": "Increased QA effort.", "task_edits": [{ "task_id": 2, "field": "effort", "new_value": "14" }], "edits_applied": 1 }
+      ],
+      "tasks": [
+        { "task_id": 1, "milestone": "M1", "task_name": "Discovery & requirements (AI-reviewed)", "skills": "Analysis",    "seniority": "Senior", "effort": 5,  "start_date": "2026-04-01", "end_date": "2026-04-05", "critical": true  },
+        { "task_id": 2, "milestone": "M1", "task_name": "Implementation (AI-reviewed)",           "skills": "Engineering", "seniority": "Mid",    "effort": 14, "start_date": "2026-04-06", "end_date": "2026-04-24", "critical": true  },
+        { "task_id": 3, "milestone": "M2", "task_name": "QA & handover (AI-reviewed)",            "skills": "QA",          "seniority": "Senior", "effort": 4,  "start_date": "2026-04-25", "end_date": "2026-04-29", "critical": false }
+      ]
+    },
+    "PLAN-003": { "status": "WITHDRAWN", "edit_history": [], "tasks": [] }
+  },
+
+  "_test_wizards": {
+    "69e36e960a1dd5877b9873ff": {
+      "id": "69e371d80a1dd5877b987402",
+      "wizard_id": "69e36e960a1dd5877b9873ff",
+      "enterprise_id": "69d7465a2c5abe973ac687d5",
+      "created_by_user_id": "69d398908c9331d1b56b23e7",
+      "status": "approved",
+      "business_owner_approver_id": "Maya Chen — VP Customer Support, Northwind Global Services",
+      "final_approver_id": "David Mueller — CTO, Northwind Global Services",
+      "legal_compliance_reviewer_id": "Alicia Brown — General Counsel, Northwind Global Services",
+      "security_reviewer_id": "Jordan Patel — CISO, Northwind Global Services",
+      "prohibited_clause_flags": [],
+      "has_unresolved_prohibited_clauses": false,
+      "created_at": "2026-04-18T11:58:16.157000",
+      "updated_at": "2026-04-18T11:59:57.405000",
+      "submitted_at": "2026-04-18T11:58:34.800000",
+      "approved_at": "2026-04-18T11:59:57.405000",
+      "quality_metrics": { "overall_confidence": 66.5, "risk_score": 15.7, "risk_level": "Low", "hallucination_flags": 0, "completeness_pct": 87.5, "completeness_status": "Near complete" },
+      "hallucination_layers": [
+        { "layer_id": 1, "name": "Template Selection Validation", "active": true,  "status": "green", "detail": "Platform: Web + Mobile, Category: System migration" },
+        { "layer_id": 2, "name": "Scope Boundary Enforcement",    "active": true,  "status": "green", "detail": "2 explicit exclusions declared." },
+        { "layer_id": 3, "name": "Clause Library Matching",       "active": true,  "status": "green", "detail": "Data Sensitivity: Confidential" },
+        { "layer_id": 4, "name": "Cross-Step Consistency Check",  "active": true,  "status": "green", "detail": "Tech stack cross-referenced with integration specs." },
+        { "layer_id": 5, "name": "Compliance Alignment",          "active": true,  "status": "green", "detail": "Frameworks: gdpr, soc2." },
+        { "layer_id": 6, "name": "Prohibited Clause Detection",   "active": true,  "status": "green", "detail": "Non-discrimination confirmed. No prohibited clauses detected." },
+        { "layer_id": 7, "name": "Business Context Anchoring",    "active": true,  "status": "green", "detail": "All generated clauses anchored to business vision and objectives." },
+        { "layer_id": 8, "name": "Evidence Pack Gate Validation", "active": false, "status": "grey",  "detail": "UAT Sign-off Authority not designated." }
+      ],
+      "generated_content": {
+        "document_title": "Statement of Work — Customer Service /",
+        "client": "Microsoft",
+        "generated_date": "18 April 2026",
+        "section_count": 8,
+        "sections": [
+          { "section_id": "S1", "title": "1. Project Vision & Business Context",       "confidence": 95, "content": "**Project Vision**\nThe main personas the platform must support.\n\n**Strategic Context:** Regulatory compliance obligation\n**Business Criticality:** Standard\n" },
+          { "section_id": "S2", "title": "2. Project Identity & Functional Scope",    "confidence": 90, "content": "**Project Title:** Customer Service /\n**Client Organisation:** Microsoft\n**Industry:** E-commerce / Retail\n**Project Category:** System migration\n**Platform:** Web + Mobile\n" },
+          { "section_id": "S3", "title": "3. Delivery Scope & Technical Architecture","confidence": 90, "content": "**Development Scope**\nfrontend, backend\n\n**Technology Stack**\nreact and tailwind css\n\n**Deployment Scope:** Not in scope — working build handover only\n" },
+          { "section_id": "S4", "title": "4. Target End Users & Acceptance Criteria", "confidence": 85, "content": "**End User Profiles**\n  - **admin** — 1-50 users, Device: Desktop\n\n**Project-Level Acceptance Criteria**\nAll acceptance criteria met and signed off before release.\n" },
+          { "section_id": "S5", "title": "5. Timeline, Team Composition & Testing",   "confidence": 30, "content": "**Project Timeline**\nStart Date: [TBD]\nTarget End Date: [TBD]\n\n**Payment Schedule**\n30% on M1 · 35% on M2 · 35% on M3.\n" },
+          { "section_id": "S6", "title": "6. Budget, Risk & Commercial Terms",        "confidence": 90, "content": "**Budget Range**\nMinimum: EUR 500,000.00\nMaximum: EUR 1,500,000.00\nPricing Model: Milestone-based\n" },
+          { "section_id": "S7", "title": "7. Governance & Compliance",                "confidence": 90, "content": "**Data Sensitivity Level:** Confidential\n**Regulatory Frameworks:** gdpr, soc2\n\n**Ethical Constraints**\nNon-Discrimination Confirmed: ✓ Yes\n" },
+          { "section_id": "S8", "title": "8. Intellectual Property & Legal Terms",    "confidence": 95, "content": "**IP Ownership**\nGlimmoraTeam retains framework IP — client owns application layer\n\n**Warranty Period**\n60 days\n" }
+        ]
+      }
+    },
+    "WIZARD-DRAFT-001": {
+      "id": "WIZARD-DRAFT-001-DOC",
+      "wizard_id": "WIZARD-DRAFT-001",
+      "enterprise_id": "ENT-BETA-999",
+      "created_by_user_id": "USER-BETA-001",
+      "status": "draft",
+      "business_owner_approver_id": "TBD",
+      "final_approver_id": "TBD",
+      "legal_compliance_reviewer_id": "TBD",
+      "security_reviewer_id": "TBD",
+      "prohibited_clause_flags": [],
+      "has_unresolved_prohibited_clauses": false,
+      "created_at": "2026-04-19T08:00:00.000000",
+      "updated_at": "2026-04-19T08:30:00.000000",
+      "submitted_at": "2026-04-19T08:30:00.000000",
+      "approved_at": null,
+      "quality_metrics": { "overall_confidence": 77.5, "risk_score": 42.0, "risk_level": "Medium", "hallucination_flags": 1, "completeness_pct": 75.0, "completeness_status": "Incomplete — timeline missing" },
+      "hallucination_layers": [
+        { "layer_id": 1, "name": "Template Selection Validation", "active": true,  "status": "green", "detail": "Platform: Web + Mobile" },
+        { "layer_id": 2, "name": "Scope Boundary Enforcement",    "active": true,  "status": "green", "detail": "1 explicit exclusion declared." },
+        { "layer_id": 3, "name": "Clause Library Matching",       "active": true,  "status": "amber", "detail": "PCI-DSS clause library partially matched." },
+        { "layer_id": 4, "name": "Cross-Step Consistency Check",  "active": true,  "status": "green", "detail": "Tech stack consistent across sections." },
+        { "layer_id": 5, "name": "Compliance Alignment",          "active": true,  "status": "green", "detail": "Frameworks: gdpr, pci-dss." },
+        { "layer_id": 6, "name": "Prohibited Clause Detection",   "active": true,  "status": "green", "detail": "No prohibited clauses detected." },
+        { "layer_id": 7, "name": "Business Context Anchoring",    "active": false, "status": "grey",  "detail": "Timeline not anchored — start/end dates missing." },
+        { "layer_id": 8, "name": "Evidence Pack Gate Validation", "active": false, "status": "grey",  "detail": "UAT Sign-off Authority not designated." }
+      ],
+      "generated_content": {
+        "document_title": "Statement of Work — E-commerce Platform Rebuild",
+        "client": "RetailCo Ltd.",
+        "generated_date": "19 April 2026",
+        "section_count": 4,
+        "sections": [
+          { "section_id": "S1", "title": "1. Project Vision & Business Context",       "confidence": 88, "content": "**Project Vision**\nRebuild the legacy e-commerce platform into a modern, scalable system.\n" },
+          { "section_id": "S2", "title": "2. Project Identity & Functional Scope",    "confidence": 85, "content": "**Platform:** Web + Mobile\n**Feature Modules**\n  - Product Catalogue [Must Have]\n  - Checkout & Payment [Must Have]\n" },
+          { "section_id": "S5", "title": "5. Timeline, Team Composition & Testing",   "confidence": 25, "content": "**Project Timeline**\nStart Date: [TBD]\nTarget End Date: [TBD]\n" },
+          { "section_id": "S6", "title": "6. Budget, Risk & Commercial Terms",        "confidence": 78, "content": "**Budget Range**\nMinimum: EUR 200,000.00\nMaximum: EUR 600,000.00\n" }
+        ]
+      }
+    },
+    "WIZARD-REJECTED-001": {
+      "id": "WIZARD-REJECTED-001-DOC",
+      "wizard_id": "WIZARD-REJECTED-001",
+      "enterprise_id": "ENT-GAMMA-555",
+      "created_by_user_id": "USER-GAMMA-002",
+      "status": "rejected",
+      "business_owner_approver_id": "Tom Walsh — VP Engineering, AlphaCorp",
+      "final_approver_id": "Sara Kim — CEO, AlphaCorp",
+      "legal_compliance_reviewer_id": "James Ford — Legal Counsel, AlphaCorp",
+      "security_reviewer_id": "Nina Patel — CISO, AlphaCorp",
+      "prohibited_clause_flags": ["Non-compete clause detected in S8", "Unlimited liability clause in S6"],
+      "has_unresolved_prohibited_clauses": true,
+      "created_at": "2026-04-15T09:00:00.000000",
+      "updated_at": "2026-04-16T14:22:00.000000",
+      "submitted_at": "2026-04-15T09:30:00.000000",
+      "approved_at": null,
+      "quality_metrics": { "overall_confidence": 77.4, "risk_score": 68.0, "risk_level": "High", "hallucination_flags": 2, "completeness_pct": 90.0, "completeness_status": "Near complete — prohibited clauses must be resolved" },
+      "hallucination_layers": [
+        { "layer_id": 1, "name": "Template Selection Validation", "active": true,  "status": "green", "detail": "Platform: Web only" },
+        { "layer_id": 2, "name": "Scope Boundary Enforcement",    "active": true,  "status": "green", "detail": "0 explicit exclusions declared." },
+        { "layer_id": 3, "name": "Clause Library Matching",       "active": true,  "status": "red",   "detail": "Unlimited liability clause not in approved library." },
+        { "layer_id": 4, "name": "Cross-Step Consistency Check",  "active": true,  "status": "green", "detail": "Tech stack consistent." },
+        { "layer_id": 5, "name": "Compliance Alignment",          "active": true,  "status": "green", "detail": "Frameworks: gdpr." },
+        { "layer_id": 6, "name": "Prohibited Clause Detection",   "active": true,  "status": "red",   "detail": "2 prohibited clauses found: non-compete, unlimited liability." },
+        { "layer_id": 7, "name": "Business Context Anchoring",    "active": true,  "status": "green", "detail": "All clauses anchored to HR portal context." },
+        { "layer_id": 8, "name": "Evidence Pack Gate Validation", "active": true,  "status": "amber", "detail": "UAT authority designated but sign-off scope undefined." }
+      ],
+      "generated_content": {
+        "document_title": "Statement of Work — Internal HR Portal",
+        "client": "AlphaCorp",
+        "generated_date": "15 April 2026",
+        "section_count": 3,
+        "sections": [
+          { "section_id": "S1", "title": "1. Project Vision & Business Context",    "confidence": 91, "content": "**Project Vision**\nBuild an internal HR self-service portal for 500 employees.\n" },
+          { "section_id": "S6", "title": "6. Budget, Risk & Commercial Terms",      "confidence": 60, "content": "**Budget:** EUR 150,000 fixed\n⚠️ Unlimited liability clause included — flagged for review\n" },
+          { "section_id": "S8", "title": "8. Intellectual Property & Legal Terms",  "confidence": 55, "content": "**IP Ownership**\nClient owns all deliverables\n⚠️ Non-compete clause detected — must be removed before approval\n" }
+        ]
+      }
     }
-}
+  }
 }

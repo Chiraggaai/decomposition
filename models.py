@@ -1,15 +1,16 @@
 # models.py
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from enum import Enum
 
 
 class PlanStatus(str, Enum):
-    PLAN_REVIEW_REQUIRED   = "PLAN_REVIEW_REQUIRED"
-    REVISION_IN_PROGRESS   = "REVISION_IN_PROGRESS"
-    PLAN_CONFIRMED         = "PLAN_CONFIRMED"
-    PLAN_LOCKED            = "PLAN_LOCKED"
+    NEW = "NEW"
+    PLAN_REVIEW_REQUIRED = "PLAN_REVIEW_REQUIRED"
+    REVISION_IN_PROGRESS = "REVISION_IN_PROGRESS"
+    PLAN_CONFIRMED = "PLAN_CONFIRMED"
+    PLAN_LOCKED = "PLAN_LOCKED"
 
 
 # ── Shared sub-models ─────────────────────────────────────────
@@ -201,9 +202,231 @@ class ChecklistUpdateResponse(BaseModel):
     checklist_complete: bool        # True when all 3 items are now checked
     can_confirm_plan:   bool        # frontend uses this to enable/disable confirm button
 
-class PlanStatus(str, Enum):
-    NEW = "NEW"  # ← ADD THIS
-    PLAN_REVIEW_REQUIRED = "PLAN_REVIEW_REQUIRED"
-    REVISION_IN_PROGRESS = "REVISION_IN_PROGRESS"
-    PLAN_CONFIRMED = "PLAN_CONFIRMED"
-    PLAN_LOCKED = "PLAN_LOCKED"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ENTERPRISE DECOMPOSITION — Edit AI Plan
+# /enterprise/decomposition/{plan_id}/edit
+# ─────────────────────────────────────────────────────────────────────────────
+
+class EditableTask(BaseModel):
+    """A single task row the user can modify on the Edit page."""
+    task_id:    int    = Field(..., example=1)
+    milestone:  str    = Field(..., example="M1")
+    task_name:  str    = Field(..., example="Design API")
+    skills:     str    = Field(..., example="Python")
+    seniority:  str    = Field(..., example="Senior")
+    effort:     int    = Field(..., description="Effort in days", example=5)
+    start_date: str    = Field(..., example="2026-04-01")
+    end_date:   str    = Field(..., example="2026-04-05")
+    critical:   bool   = Field(..., example=True)
+
+
+class TaskEdit(BaseModel):
+    """One field change submitted by the user for a specific task."""
+    task_id:   int = Field(..., description="ID of the task to edit.", example=1)
+    field:     str = Field(
+        ...,
+        description="Field to change: task_name | effort | skills | seniority | start_date | end_date",
+        example="effort",
+    )
+    new_value: str = Field(..., description="New value for the field.", example="8")
+
+    model_config = {
+        "json_schema_extra": {"example": {"task_id": 1, "field": "effort", "new_value": "8"}}
+    }
+
+
+class EditAiPlanRequest(BaseModel):
+    """
+    Body for PUT /enterprise/decomposition/{plan_id}/edit.
+    Submitted when the user clicks the Edit button and saves changes.
+    """
+    notes:      str        = Field(
+        ...,
+        min_length=5,
+        description="What should change and why — sent to AI for review.",
+        example="Split the implementation task into frontend and backend, and increase QA effort.",
+    )
+    task_edits: list[TaskEdit] = Field(
+        default_factory=list,
+        description="Per-task field overrides (optional). Applied before AI re-review.",
+    )
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "notes": "Split the implementation task into frontend and backend, and increase QA effort.",
+                "task_edits": [
+                    {"task_id": 2, "field": "effort",   "new_value": "14"},
+                    {"task_id": 3, "field": "seniority", "new_value": "Senior"},
+                ],
+            }
+        }
+    }
+
+
+class EditAiPlanResponse(BaseModel):
+    """Response for PUT — returns AI-reviewed updated task list."""
+    success:                  bool              = True
+    message:                  str
+    plan_id:                  str
+    status:                   str
+    notes_submitted:          str
+    task_edits_applied:       int
+    updated_tasks:            list[EditableTask]
+    edited_at:                str
+    next:                     str               = (
+        "Review the updated task list, check all checklist items, then Approve."
+    )
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ENTERPRISE DECOMPOSITION — Task Breakdown
+# GET /enterprise/decomposition/{plan_id}/breakdown
+# ─────────────────────────────────────────────────────────────────────────────
+
+class BreakdownTask(BaseModel):
+    """A single task row inside a milestone section (matches the list UI)."""
+    task_id:          int        = Field(..., example=101)
+    task_name:        str        = Field(..., example="Stakeholder interview synthesis")
+    status:           str        = Field(
+        ...,
+        description="IN_PROGRESS | BACKLOG | DONE | PROPOSED",
+        example="IN_PROGRESS",
+    )
+    priority:         str        = Field(
+        ...,
+        description="HIGH | MEDIUM | LOW",
+        example="HIGH",
+    )
+    effort_hours:     int        = Field(..., description="Effort in hours", example=19)
+    skills:           list[str]  = Field(
+        default_factory=list,
+        description="Skill / tech-stack tags shown on the task card.",
+        example=["TypeScript", "React"],
+    )
+    progress:         int        = Field(
+        ...,
+        description="Completion percentage 0–100",
+        example=88,
+    )
+    dependency_count: int        = Field(
+        default=0,
+        description="Number of tasks this task depends on.",
+        example=1,
+    )
+
+
+class MilestoneSection(BaseModel):
+    """
+    One collapsible milestone section (e.g. 'Discovery & Requirements').
+    Contains multiple tasks produced by the AI breakdown.
+    """
+    milestone_id:   int                 = Field(..., example=1)
+    milestone_name: str                 = Field(..., example="Discovery & Requirements")
+    status:         str                 = Field(
+        ...,
+        description="PROPOSED | IN_PROGRESS | DONE",
+        example="PROPOSED",
+    )
+    tasks_completed: int                = Field(..., description="Number of completed tasks", example=0)
+    task_count:      int                = Field(..., description="Total tasks in this milestone", example=6)
+    subtask_count:   int                = Field(..., description="Total subtasks across all tasks", example=8)
+    total_hours:     int                = Field(..., description="Sum of effort_hours across all tasks", example=160)
+    tasks:           list[BreakdownTask]
+
+
+class TaskBreakdownResponse(BaseModel):
+    """Response for GET /enterprise/decomposition/{plan_id}/breakdown."""
+    success:           bool                  = True
+    plan_id:           str
+    total_milestones:  int
+    total_tasks:       int
+    total_hours:       int                   = Field(..., description="Grand total effort hours across all milestones")
+    milestones:        list[MilestoneSection]
+    generated_at:      str
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# AI DRAFT REVIEW
+# POST /api/v1/plans
+# ─────────────────────────────────────────────────────────────────────────────
+
+class AiDraftReviewRequest(BaseModel):
+    """Request body — identify which wizard / enterprise plan to retrieve."""
+    wizard_id:     str = Field(..., description="Wizard session identifier.", example="69e36e960a1dd5877b9873ff")
+    enterprise_id: str = Field(..., description="Enterprise account identifier.",  example="69d7465a2c5abe973ac687d5")
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "wizard_id":     "69e36e960a1dd5877b9873ff",
+                "enterprise_id": "69d7465a2c5abe973ac687d5",
+            }
+        }
+    }
+
+
+class DraftSection(BaseModel):
+    """One numbered section inside the AI-generated document."""
+    section_id: str  = Field(..., example="S1")
+    title:      str  = Field(..., example="1. Project Vision & Business Context")
+    confidence: int  = Field(..., description="AI confidence score 0–100", example=95)
+    content:    str  = Field(..., description="Markdown-formatted section body")
+
+
+class GeneratedContent(BaseModel):
+    """Full AI-generated SOW document."""
+    document_title: str            = Field(..., example="Statement of Work — Customer Service /")
+    client:         str            = Field(..., example="Microsoft")
+    generated_date: str            = Field(..., example="18 April 2026")
+    sections:       list[DraftSection]
+    section_count:  int            = Field(..., example=8)
+
+
+class QualityMetrics(BaseModel):
+    """AI quality and risk scoring for the generated document."""
+    overall_confidence:  float = Field(..., example=66.5)
+    risk_score:          float = Field(..., example=15.7)
+    risk_level:          str   = Field(..., description="Low | Medium | High", example="Low")
+    hallucination_flags: int   = Field(..., example=0)
+    completeness_pct:    float = Field(..., example=87.5)
+    completeness_status: str   = Field(..., example="Near complete")
+
+
+class HallucinationLayer(BaseModel):
+    """One validation layer in the AI anti-hallucination pipeline."""
+    layer_id: int  = Field(..., example=1)
+    name:     str  = Field(..., example="Template Selection Validation")
+    active:   bool = Field(..., example=True)
+    status:   str  = Field(..., description="green | amber | red | grey", example="green")
+    detail:   str  = Field(..., example="Platform: Web + Mobile, Category: System migration")
+
+
+class AiDraftReviewData(BaseModel):
+    """Full plan / SOW record returned by the AI draft review endpoint."""
+    id:                              str
+    wizard_id:                       str
+    enterprise_id:                   str
+    created_by_user_id:              str
+    status:                          str = Field(..., description="draft | submitted | approved | rejected")
+    business_owner_approver_id:      str
+    final_approver_id:               str
+    legal_compliance_reviewer_id:    str
+    security_reviewer_id:            str
+    generated_content:               GeneratedContent
+    quality_metrics:                 QualityMetrics
+    hallucination_layers:            list[HallucinationLayer]
+    prohibited_clause_flags:         list[str] = Field(default_factory=list)
+    has_unresolved_prohibited_clauses: bool    = False
+    created_at:  str
+    updated_at:  str
+    submitted_at: str
+    approved_at: Optional[str] = None
+
+
+class AiDraftReviewResponse(BaseModel):
+    """Envelope returned by POST /api/v1/plans."""
+    success: bool                    = True
+    message: Optional[str]           = None
+    data:    AiDraftReviewData

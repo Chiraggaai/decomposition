@@ -14,9 +14,8 @@ from routes.revised import router as revised_router
 from routes.revision_details import router as revision_detail_router
 from routes.lock import router as lock_router
 from routes.action import router as actions_router
-
-
-
+from routes.enterprise_decomposition import router as enterprise_decomposition_router
+from routes.plans_v1 import router as plans_v1_router
 
 
 app = FastAPI(
@@ -30,8 +29,6 @@ app = FastAPI(
 
 # ─────────────────────────────────────────────────────────────
 # CORS
-# Replace "*" with your frontend URL in production:
-#   allow_origins=["https://your-frontend.com"]
 # ─────────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
@@ -41,8 +38,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(plans_router,)
-app.include_router(plan_review_router) 
+app.include_router(plans_router)
+app.include_router(plan_review_router)
 app.include_router(task_router, prefix="/plans", tags=["Tasks"])
 app.include_router(checklist_router, prefix="/plans", tags=["Checklist"])
 app.include_router(summary_router, prefix="/plans", tags=["Summary"])
@@ -53,7 +50,10 @@ app.include_router(revised_router, prefix="/plans", tags=["Revised Plan"])
 app.include_router(revision_detail_router, prefix="/plans", tags=["Revision Detail"])
 app.include_router(lock_router, prefix="/plans", tags=["Plan Lock"])
 app.include_router(actions_router)
+app.include_router(enterprise_decomposition_router)
+app.include_router(plans_v1_router)
 
-@app.get("/") 
-def home(): 
+
+@app.get("/")
+def home():
     return {"message": "API is running"}
